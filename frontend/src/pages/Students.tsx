@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import toast from "react-hot-toast";
 
+import { AxiosError } from "axios";
+
 
 import {
     getStudents,
@@ -23,12 +25,18 @@ import {
 type Student = {
 
     id: number;
+
     name: string;
+
     email: string;
+
     department: string;
+
     age: number;
 
 };
+
+
 
 
 
@@ -39,24 +47,30 @@ function Students() {
         useState<Student[]>([]);
 
 
+
     const [search, setSearch] =
         useState("");
+
 
 
     const [name, setName] =
         useState("");
 
 
+
     const [email, setEmail] =
         useState("");
+
 
 
     const [department, setDepartment] =
         useState("");
 
 
+
     const [age, setAge] =
         useState("");
+
 
 
     const [editId, setEditId] =
@@ -65,17 +79,121 @@ function Students() {
 
 
 
-    const loadStudents = async () => {
 
 
-        const data =
-            await getStudents();
+
+    const showError = (
+        error: unknown
+    ) => {
 
 
-        setStudents(data);
+
+        if (
+            error instanceof AxiosError
+        ) {
+
+
+            const data =
+                error.response?.data;
+
+
+
+
+            if (
+                data?.message
+            ) {
+
+
+                toast.error(
+                    data.message
+                );
+
+
+                return;
+
+
+            }
+
+
+
+
+
+            if (
+                data
+            ) {
+
+
+                const firstError =
+                    Object.values(data)[0];
+
+
+
+                if (
+                    firstError
+                ) {
+
+
+                    toast.error(
+                        String(firstError)
+                    );
+
+
+                    return;
+
+
+                }
+
+
+            }
+
+
+        }
+
+
+
+        toast.error(
+            "Something went wrong"
+        );
 
 
     };
+
+
+
+
+
+
+
+
+    const loadStudents = async () => {
+
+
+        try {
+
+
+            const data =
+                await getStudents();
+
+
+
+            setStudents(data);
+
+
+
+        } catch (error) {
+
+
+            showError(error);
+
+
+        }
+
+
+    };
+
+
+
+
 
 
 
@@ -93,24 +211,34 @@ function Students() {
 
 
 
+
+
+
     const handleSubmit = async () => {
 
 
         const data = {
 
             name,
+
             email,
+
             department,
+
             age: Number(age)
 
         };
 
 
 
+
+
         try {
 
 
+
             if (editId) {
+
 
 
                 await updateStudent(
@@ -119,18 +247,26 @@ function Students() {
                 );
 
 
+
                 toast.success(
                     "Student updated successfully"
                 );
 
 
+
                 setEditId(null);
+
 
 
             } else {
 
 
-                await createStudent(data);
+
+
+                await createStudent(
+                    data
+                );
+
 
 
                 toast.success(
@@ -143,10 +279,16 @@ function Students() {
 
 
 
+
+
             setName("");
+
             setEmail("");
+
             setDepartment("");
+
             setAge("");
+
 
 
 
@@ -154,15 +296,17 @@ function Students() {
 
 
 
+
         } catch (error) {
+
 
 
             console.log(error);
 
 
-            toast.error(
-                "Operation failed"
-            );
+
+            showError(error);
+
 
 
         }
@@ -176,18 +320,33 @@ function Students() {
 
 
 
+
+
+
     const handleEdit = (
         student: Student
     ) => {
 
 
-        setEditId(student.id);
+        setEditId(
+            student.id
+        );
 
-        setName(student.name);
 
-        setEmail(student.email);
+        setName(
+            student.name
+        );
 
-        setDepartment(student.department);
+
+        setEmail(
+            student.email
+        );
+
+
+        setDepartment(
+            student.department
+        );
+
 
         setAge(
             String(student.age)
@@ -202,9 +361,12 @@ function Students() {
 
 
 
+
+
     const handleDelete = async (
         id: number
     ) => {
+
 
 
         if (
@@ -214,10 +376,15 @@ function Students() {
         ) {
 
 
+
             try {
 
 
-                await deleteStudent(id);
+
+                await deleteStudent(
+                    id
+                );
+
 
 
 
@@ -227,7 +394,9 @@ function Students() {
 
 
 
+
                 loadStudents();
+
 
 
 
@@ -235,13 +404,14 @@ function Students() {
 
 
 
+
                 console.log(error);
 
 
 
-                toast.error(
-                    "Delete failed"
-                );
+
+                showError(error);
+
 
 
             }
@@ -259,28 +429,39 @@ function Students() {
 
 
 
+
+
     const filteredStudents =
         students.filter(
 
             student =>
 
+
                 student.name
                     .toLowerCase()
-                    .includes(search.toLowerCase())
+                    .includes(
+                        search.toLowerCase()
+                    )
 
                 ||
 
                 student.email
                     .toLowerCase()
-                    .includes(search.toLowerCase())
+                    .includes(
+                        search.toLowerCase()
+                    )
 
                 ||
 
                 student.department
                     .toLowerCase()
-                    .includes(search.toLowerCase())
+                    .includes(
+                        search.toLowerCase()
+                    )
 
         );
+
+
 
 
 
@@ -304,6 +485,7 @@ function Students() {
                 </h1>
 
 
+
                 <p className="text-gray-500">
 
                     Manage student information
@@ -320,14 +502,24 @@ function Students() {
 
 
 
+
+
             <div className="bg-white rounded-2xl shadow p-6 mb-8">
 
 
                 <h2 className="font-bold text-lg mb-5">
 
-                    {editId ? "Update Student" : "Add New Student"}
+
+                    {
+                        editId
+                            ? "Update Student"
+                            : "Add New Student"
+                    }
+
 
                 </h2>
+
+
 
 
 
@@ -336,40 +528,80 @@ function Students() {
                 <div className="grid grid-cols-5 gap-4">
 
 
+
                     <input
+
                         value={name}
-                        onChange={e => setName(e.target.value)}
+
+                        onChange={
+                            e => setName(e.target.value)
+                        }
+
                         placeholder="Name"
+
                         className="border rounded-xl p-3"
+
                     />
 
 
 
+
+
                     <input
+
                         value={email}
-                        onChange={e => setEmail(e.target.value)}
+
+                        onChange={
+                            e => setEmail(e.target.value)
+                        }
+
                         placeholder="Email"
+
                         className="border rounded-xl p-3"
+
                     />
 
 
 
+
+
                     <input
+
                         value={department}
-                        onChange={e => setDepartment(e.target.value)}
+
+                        onChange={
+                            e => setDepartment(e.target.value)
+                        }
+
                         placeholder="Department"
+
                         className="border rounded-xl p-3"
+
                     />
+
+
 
 
 
                     <input
+
                         value={age}
-                        onChange={e => setAge(e.target.value)}
+
+                        onChange={
+                            e => setAge(e.target.value)
+                        }
+
                         placeholder="Age"
+
                         type="number"
+
                         className="border rounded-xl p-3"
+
                     />
+
+
+
+
 
 
 
@@ -382,11 +614,19 @@ function Students() {
 
                     >
 
+
                         <Plus size={18}/>
 
-                        {editId ? "Update" : "Add"}
+
+                        {
+                            editId
+                                ? "Update"
+                                : "Add"
+                        }
+
 
                     </button>
+
 
 
                 </div>
@@ -402,13 +642,17 @@ function Students() {
 
 
 
+
+
             <div className="bg-white rounded-2xl shadow p-6">
+
 
 
                 <div className="flex items-center border rounded-xl p-3 mb-5">
 
 
                     <Search />
+
 
 
                     <input
@@ -434,6 +678,7 @@ function Students() {
 
 
 
+
                 <table className="w-full">
 
 
@@ -446,6 +691,7 @@ function Students() {
 
                             student => (
 
+
                                 <tr
 
                                     key={student.id}
@@ -455,24 +701,43 @@ function Students() {
                                 >
 
 
+
                                     <td className="p-4">
+
                                         {student.name}
+
                                     </td>
 
 
+
+
                                     <td>
+
                                         {student.email}
+
                                     </td>
 
 
+
+
                                     <td>
+
                                         {student.department}
+
                                     </td>
+
+
 
 
                                     <td>
+
                                         {student.age}
+
                                     </td>
+
+
+
+
 
 
 
@@ -480,22 +745,40 @@ function Students() {
 
 
                                         <button
-                                            onClick={() => handleEdit(student)}
+
+                                            onClick={
+                                                () => handleEdit(student)
+                                            }
+
                                             className="text-blue-600"
+
                                         >
 
+
                                             <Edit />
+
 
                                         </button>
 
 
 
+
+
+
+
                                         <button
-                                            onClick={() => handleDelete(student.id)}
+
+                                            onClick={
+                                                () => handleDelete(student.id)
+                                            }
+
                                             className="text-red-600"
+
                                         >
 
+
                                             <Trash2 />
+
 
                                         </button>
 
@@ -503,7 +786,9 @@ function Students() {
                                     </td>
 
 
+
                                 </tr>
+
 
                             )
 

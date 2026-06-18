@@ -1,6 +1,7 @@
 import axios from "./axios";
 
 
+
 export type Student = {
 
     id: number;
@@ -9,26 +10,57 @@ export type Student = {
 
     email: string;
 
+    department: string;
+
+    age: number;
+
 };
+
+
+
+
+export type StudentRequest = {
+
+    name: string;
+
+    email: string;
+
+    department: string;
+
+    age: number;
+
+};
+
+
+
+
 
 
 
 export const getStudents = async () => {
 
+
     const response =
-        await axios.get("/api/students");
+        await axios.get<Student[]>(
+            "/api/students"
+        );
+
 
     return response.data;
+
 
 };
 
 
 
+
+
+
+
+
+
 export const createStudent = async (
-    data: {
-        name: string;
-        email: string;
-    }
+    data: StudentRequest
 ) => {
 
 
@@ -41,7 +73,14 @@ export const createStudent = async (
 
     return response.data;
 
+
 };
+
+
+
+
+
+
 
 
 
@@ -49,10 +88,7 @@ export const updateStudent = async (
 
     id: number,
 
-    data: {
-        name: string;
-        email: string;
-    }
+    data: StudentRequest
 
 ) => {
 
@@ -66,7 +102,14 @@ export const updateStudent = async (
 
     return response.data;
 
+
 };
+
+
+
+
+
+
 
 
 
@@ -76,8 +119,13 @@ export const deleteStudent = async (
 ) => {
 
 
-    await axios.delete(
-        `/api/students/${id}`
-    );
+    const response =
+        await axios.delete(
+            `/api/students/${id}`
+        );
+
+
+    return response.data;
+
 
 };
