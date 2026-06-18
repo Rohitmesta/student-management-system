@@ -5,18 +5,27 @@ import {
 } from "react-router-dom";
 
 
+import {
+    GraduationCap,
+    LayoutDashboard,
+    Users,
+    LogOut
+} from "lucide-react";
+
+
+
 function DashboardLayout() {
 
 
-    const navigate = useNavigate();
+    const navigate =
+        useNavigate();
+
 
 
     const logout = () => {
 
 
-        localStorage.removeItem("accessToken");
-
-        localStorage.removeItem("refreshToken");
+        localStorage.clear();
 
 
         navigate("/login");
@@ -26,69 +35,100 @@ function DashboardLayout() {
 
 
 
+
     return (
 
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen bg-gray-100">
 
 
-            <aside className="w-64 bg-slate-950 text-white p-6">
+            <aside className="w-72 bg-slate-950 text-white flex flex-col">
 
 
-                <h1 className="text-xl font-bold mb-10">
-
-                    Student Admin
-
-                </h1>
+                <div className="p-6 flex items-center gap-3">
 
 
+                    <GraduationCap size={32} />
 
-                <nav className="space-y-5">
+
+                    <h1 className="text-2xl font-bold">
+
+                        EduAdmin
+
+                    </h1>
+
+
+                </div>
+
+
+
+
+
+                <nav className="flex-1 px-5 mt-8 space-y-3">
 
 
                     <Link
-
-                        className="block cursor-pointer hover:text-blue-400"
 
                         to="/dashboard"
 
+                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-800"
+
                     >
+
+
+                        <LayoutDashboard />
+
 
                         Dashboard
 
+
                     </Link>
+
 
 
 
 
                     <Link
 
-                        className="block cursor-pointer hover:text-blue-400"
-
                         to="/students"
+
+                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-800"
 
                     >
 
+
+                        <Users />
+
+
                         Students
+
 
                     </Link>
 
 
 
-
-                    <button
-
-                        onClick={logout}
-
-                        className="block text-red-400 hover:text-red-300 mt-10"
-
-                    >
-
-                        Logout
-
-                    </button>
-
-
                 </nav>
+
+
+
+
+
+                <button
+
+                    onClick={logout}
+
+                    className="m-5 flex items-center gap-3 p-3 rounded-xl text-red-400 hover:bg-red-950"
+
+                >
+
+
+                    <LogOut />
+
+
+                    Logout
+
+
+                </button>
+
 
 
             </aside>
@@ -96,7 +136,9 @@ function DashboardLayout() {
 
 
 
-            <main className="flex-1 bg-gray-100 p-8">
+
+
+            <main className="flex-1 p-8">
 
 
                 <Outlet />
@@ -105,11 +147,13 @@ function DashboardLayout() {
             </main>
 
 
+
         </div>
 
     );
 
 }
+
 
 
 export default DashboardLayout;
