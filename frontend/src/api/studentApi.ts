@@ -6,6 +6,8 @@ export type Student = {
 
     id: number;
 
+    usn: string;
+
     name: string;
 
     email: string;
@@ -15,12 +17,16 @@ export type Student = {
     age: number;
 
 };
+
+
 
 
 
 
 export type StudentRequest = {
 
+    usn: string;
+
     name: string;
 
     email: string;
@@ -30,6 +36,8 @@ export type StudentRequest = {
     age: number;
 
 };
+
+
 
 
 
@@ -59,6 +67,7 @@ export const getStudents = async () => {
 
 
 
+
 export const createStudent = async (
     data: StudentRequest
 ) => {
@@ -75,6 +84,7 @@ export const createStudent = async (
 
 
 };
+
 
 
 

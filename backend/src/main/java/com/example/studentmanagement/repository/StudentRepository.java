@@ -3,12 +3,16 @@ package com.example.studentmanagement.repository;
 
 import com.example.studentmanagement.model.Student;
 
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
+
 import org.springframework.stereotype.Repository;
+
 
 
 
@@ -19,9 +23,12 @@ public interface StudentRepository
 
 
 
+
     Page<Student> findAll(
             Pageable pageable
     );
+
+
 
 
 
@@ -39,8 +46,35 @@ public interface StudentRepository
 
 
 
+
+
+
+    Page<Student> findByNameContainingIgnoreCaseOrUsnContainingIgnoreCaseOrEmailContainingIgnoreCase(
+
+            String name,
+
+            String usn,
+
+            String email,
+
+            Pageable pageable
+
+    );
+
+
+
+
+
+
+
+
     boolean existsByEmail(
             String email
+    );
+
+
+    boolean existsByUsn(
+            String usn
     );
 
 

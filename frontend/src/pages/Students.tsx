@@ -26,6 +26,8 @@ type Student = {
 
     id: number;
 
+    usn: string;
+
     name: string;
 
     email: string;
@@ -47,34 +49,33 @@ function Students() {
         useState<Student[]>([]);
 
 
-
     const [search, setSearch] =
         useState("");
 
+
+    const [usn, setUsn] =
+        useState("");
 
 
     const [name, setName] =
         useState("");
 
 
-
     const [email, setEmail] =
         useState("");
-
 
 
     const [department, setDepartment] =
         useState("");
 
 
-
     const [age, setAge] =
         useState("");
 
 
-
     const [editId, setEditId] =
         useState<number | null>(null);
+
 
 
 
@@ -87,7 +88,6 @@ function Students() {
     ) => {
 
 
-
         if (
             error instanceof AxiosError
         ) {
@@ -98,39 +98,26 @@ function Students() {
 
 
 
-
             if (
                 data?.message
             ) {
 
-
-                toast.error(
-                    data.message
-                );
-
+                toast.error(data.message);
 
                 return;
-
 
             }
 
 
 
-
-
-            if (
-                data
-            ) {
+            if (data) {
 
 
                 const firstError =
                     Object.values(data)[0];
 
 
-
-                if (
-                    firstError
-                ) {
+                if (firstError) {
 
 
                     toast.error(
@@ -140,23 +127,19 @@ function Students() {
 
                     return;
 
-
                 }
-
 
             }
 
-
         }
-
 
 
         toast.error(
             "Something went wrong"
         );
 
-
     };
+
 
 
 
@@ -175,9 +158,7 @@ function Students() {
                 await getStudents();
 
 
-
             setStudents(data);
-
 
 
         } catch (error) {
@@ -187,7 +168,6 @@ function Students() {
 
 
         }
-
 
     };
 
@@ -219,6 +199,8 @@ function Students() {
 
         const data = {
 
+            usn,
+
             name,
 
             email,
@@ -231,14 +213,10 @@ function Students() {
 
 
 
-
-
         try {
 
 
-
             if (editId) {
-
 
 
                 await updateStudent(
@@ -247,26 +225,21 @@ function Students() {
                 );
 
 
-
                 toast.success(
                     "Student updated successfully"
                 );
 
 
-
                 setEditId(null);
-
 
 
             } else {
 
 
 
-
                 await createStudent(
                     data
                 );
-
 
 
                 toast.success(
@@ -279,16 +252,11 @@ function Students() {
 
 
 
-
-
+            setUsn("");
             setName("");
-
             setEmail("");
-
             setDepartment("");
-
             setAge("");
-
 
 
 
@@ -296,24 +264,16 @@ function Students() {
 
 
 
-
         } catch (error) {
 
 
-
-            console.log(error);
-
-
-
             showError(error);
-
 
 
         }
 
 
     };
-
 
 
 
@@ -328,33 +288,21 @@ function Students() {
     ) => {
 
 
-        setEditId(
-            student.id
-        );
+        setEditId(student.id);
 
+        setUsn(student.usn);
 
-        setName(
-            student.name
-        );
+        setName(student.name);
 
+        setEmail(student.email);
 
-        setEmail(
-            student.email
-        );
-
-
-        setDepartment(
-            student.department
-        );
-
+        setDepartment(student.department);
 
         setAge(
             String(student.age)
         );
 
-
     };
-
 
 
 
@@ -368,24 +316,15 @@ function Students() {
     ) => {
 
 
-
         if (
-            confirm(
-                "Delete this student?"
-            )
+            confirm("Delete this student?")
         ) {
-
 
 
             try {
 
 
-
-                await deleteStudent(
-                    id
-                );
-
-
+                await deleteStudent(id);
 
 
                 toast.success(
@@ -393,32 +332,20 @@ function Students() {
                 );
 
 
-
-
                 loadStudents();
-
 
 
 
             } catch (error) {
 
 
-
-
-                console.log(error);
-
-
-
-
                 showError(error);
-
 
 
             }
 
 
         }
-
 
     };
 
@@ -437,30 +364,29 @@ function Students() {
             student =>
 
 
+                student.usn
+                    .toLowerCase()
+                    .includes(search.toLowerCase())
+
+                ||
+
                 student.name
                     .toLowerCase()
-                    .includes(
-                        search.toLowerCase()
-                    )
+                    .includes(search.toLowerCase())
 
                 ||
 
                 student.email
                     .toLowerCase()
-                    .includes(
-                        search.toLowerCase()
-                    )
+                    .includes(search.toLowerCase())
 
                 ||
 
                 student.department
                     .toLowerCase()
-                    .includes(
-                        search.toLowerCase()
-                    )
+                    .includes(search.toLowerCase())
 
         );
-
 
 
 
@@ -475,27 +401,11 @@ function Students() {
         <div>
 
 
-            <div className="mb-8">
+            <h1 className="text-3xl font-bold mb-8">
 
+                Students 🎓
 
-                <h1 className="text-3xl font-bold">
-
-                    Students 🎓
-
-                </h1>
-
-
-
-                <p className="text-gray-500">
-
-                    Manage student information
-
-                </p>
-
-
-            </div>
-
-
+            </h1>
 
 
 
@@ -509,13 +419,7 @@ function Students() {
 
                 <h2 className="font-bold text-lg mb-5">
 
-
-                    {
-                        editId
-                            ? "Update Student"
-                            : "Add New Student"
-                    }
-
+                    {editId ? "Update Student" : "Add New Student"}
 
                 </h2>
 
@@ -524,8 +428,22 @@ function Students() {
 
 
 
+                <div className="grid grid-cols-6 gap-4">
 
-                <div className="grid grid-cols-5 gap-4">
+
+                    <input
+
+                        value={usn}
+
+                        onChange={
+                            e => setUsn(e.target.value)
+                        }
+
+                        placeholder="USN"
+
+                        className="border rounded-xl p-3"
+
+                    />
 
 
 
@@ -545,8 +463,6 @@ function Students() {
 
 
 
-
-
                     <input
 
                         value={email}
@@ -563,8 +479,6 @@ function Students() {
 
 
 
-
-
                     <input
 
                         value={department}
@@ -578,8 +492,6 @@ function Students() {
                         className="border rounded-xl p-3"
 
                     />
-
-
 
 
 
@@ -602,15 +514,11 @@ function Students() {
 
 
 
-
-
-
-
                     <button
 
                         onClick={handleSubmit}
 
-                        className="bg-slate-950 text-white rounded-xl flex justify-center items-center gap-2"
+                        className="bg-slate-950 text-white rounded-xl flex items-center justify-center gap-2"
 
                     >
 
@@ -618,15 +526,10 @@ function Students() {
                         <Plus size={18}/>
 
 
-                        {
-                            editId
-                                ? "Update"
-                                : "Add"
-                        }
+                        {editId ? "Update" : "Add"}
 
 
                     </button>
-
 
 
                 </div>
@@ -642,17 +545,13 @@ function Students() {
 
 
 
-
-
             <div className="bg-white rounded-2xl shadow p-6">
 
 
-
-                <div className="flex items-center border rounded-xl p-3 mb-5">
+                <div className="flex border rounded-xl p-3 mb-5">
 
 
                     <Search />
-
 
 
                     <input
@@ -663,7 +562,7 @@ function Students() {
                             e => setSearch(e.target.value)
                         }
 
-                        placeholder="Search students..."
+                        placeholder="Search USN, name, email..."
 
                         className="outline-none ml-3 flex-1"
 
@@ -671,8 +570,6 @@ function Students() {
 
 
                 </div>
-
-
 
 
 
@@ -687,112 +584,100 @@ function Students() {
 
                     {
 
-                        filteredStudents.map(
+                        filteredStudents.map(student => (
 
-                            student => (
 
+                            <tr
 
-                                <tr
+                                key={student.id}
 
-                                    key={student.id}
+                                className="border-t text-center"
 
-                                    className="border-t text-center"
+                            >
 
-                                >
 
+                                <td className="p-4">
 
+                                    {student.usn}
 
-                                    <td className="p-4">
+                                </td>
 
-                                        {student.name}
 
-                                    </td>
 
+                                <td>
 
+                                    {student.name}
 
+                                </td>
 
-                                    <td>
 
-                                        {student.email}
 
-                                    </td>
+                                <td>
 
+                                    {student.email}
 
+                                </td>
 
 
-                                    <td>
 
-                                        {student.department}
+                                <td>
 
-                                    </td>
+                                    {student.department}
 
+                                </td>
 
 
 
-                                    <td>
+                                <td>
 
-                                        {student.age}
+                                    {student.age}
 
-                                    </td>
+                                </td>
 
 
 
+                                <td className="space-x-5">
 
 
+                                    <button
 
+                                        onClick={
+                                            () => handleEdit(student)
+                                        }
 
-                                    <td className="space-x-5">
+                                        className="text-blue-600"
 
+                                    >
 
-                                        <button
+                                        <Edit />
 
-                                            onClick={
-                                                () => handleEdit(student)
-                                            }
+                                    </button>
 
-                                            className="text-blue-600"
 
-                                        >
 
 
-                                            <Edit />
+                                    <button
 
+                                        onClick={
+                                            () => handleDelete(student.id)
+                                        }
 
-                                        </button>
+                                        className="text-red-600"
 
+                                    >
 
+                                        <Trash2 />
 
+                                    </button>
 
 
+                                </td>
 
 
-                                        <button
+                            </tr>
 
-                                            onClick={
-                                                () => handleDelete(student.id)
-                                            }
 
-                                            className="text-red-600"
-
-                                        >
-
-
-                                            <Trash2 />
-
-
-                                        </button>
-
-
-                                    </td>
-
-
-
-                                </tr>
-
-
-                            )
-
-                        )
+                        ))
 
                     }
 

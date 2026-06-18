@@ -19,7 +19,19 @@ public class Student {
 
 
 
+
+    @Column(
+            nullable = false,
+            unique = true
+    )
+    private String usn;
+
+
+
+
     private String name;
+
+
 
 
 
@@ -31,11 +43,16 @@ public class Student {
 
 
 
+
+
     private String department;
 
 
 
+
+
     private Integer age;
+
 
 
 
@@ -53,22 +70,38 @@ public class Student {
 
 
 
+
     public Student(
+
             Long id,
+
+            String usn,
+
             String name,
+
             String email,
+
             String department,
+
             Integer age
+
     ) {
 
 
         this.id = id;
 
+
+        this.usn = usn;
+
+
         this.name = name;
+
 
         this.email = email;
 
+
         this.department = department;
+
 
         this.age = age;
 
@@ -82,11 +115,14 @@ public class Student {
 
 
 
+
+
     public Long getId() {
 
         return id;
 
     }
+
 
 
     public void setId(
@@ -105,11 +141,38 @@ public class Student {
 
 
 
+    public String getUsn() {
+
+        return usn;
+
+    }
+
+
+
+    public void setUsn(
+            String usn
+    ) {
+
+        this.usn = usn;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
     public String getName() {
 
         return name;
 
     }
+
 
 
     public void setName(
@@ -128,11 +191,15 @@ public class Student {
 
 
 
+
+
+
     public String getEmail() {
 
         return email;
 
     }
+
 
 
     public void setEmail(
@@ -151,11 +218,14 @@ public class Student {
 
 
 
+
+
     public String getDepartment() {
 
         return department;
 
     }
+
 
 
     public void setDepartment(
@@ -175,11 +245,13 @@ public class Student {
 
 
 
+
     public Integer getAge() {
 
         return age;
 
     }
+
 
 
     public void setAge(

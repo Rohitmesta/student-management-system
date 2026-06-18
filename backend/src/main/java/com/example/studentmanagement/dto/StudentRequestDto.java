@@ -13,12 +13,24 @@ import jakarta.validation.constraints.Pattern;
 public class StudentRequestDto {
 
 
+    @NotBlank(message = "USN is required")
+    @Pattern(
+            regexp = "^[0-9][A-Za-z]{2}[0-9]{2}[A-Za-z]{2}[0-9]{3}$",
+            message = "Invalid USN format"
+    )
+    private String usn;
+
+
+
+
+
     @NotBlank(message = "Name is required")
     @Pattern(
             regexp = "^[A-Za-z ]+$",
             message = "Name must contain only letters"
     )
     private String name;
+
 
 
 
@@ -31,12 +43,14 @@ public class StudentRequestDto {
 
 
 
+
     @NotBlank(message = "Department is required")
     @Pattern(
             regexp = "^[A-Za-z ]+$",
             message = "Department must contain only letters"
     )
     private String department;
+
 
 
 
@@ -59,9 +73,35 @@ public class StudentRequestDto {
 
 
 
+
     public StudentRequestDto() {
 
     }
+
+
+
+
+
+
+
+
+    public String getUsn() {
+
+        return usn;
+
+    }
+
+
+    public void setUsn(
+            String usn
+    ) {
+
+        this.usn = usn;
+
+    }
+
+
+
 
 
 
@@ -89,6 +129,8 @@ public class StudentRequestDto {
 
 
 
+
+
     public String getEmail() {
 
         return email;
@@ -103,6 +145,8 @@ public class StudentRequestDto {
         this.email = email;
 
     }
+
+
 
 
 

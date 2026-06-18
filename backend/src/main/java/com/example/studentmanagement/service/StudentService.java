@@ -3,14 +3,11 @@ package com.example.studentmanagement.service;
 
 import com.example.studentmanagement.dto.StudentRequestDto;
 import com.example.studentmanagement.dto.StudentResponseDto;
-
 import com.example.studentmanagement.model.Student;
-
 import com.example.studentmanagement.repository.StudentRepository;
 
 
 import org.modelmapper.ModelMapper;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,7 +24,6 @@ import java.util.stream.Collectors;
 
 
 
-
 @Service
 public class StudentService {
 
@@ -36,10 +32,8 @@ public class StudentService {
     private StudentRepository studentRepository;
 
 
-
     @Autowired
     private ModelMapper modelMapper;
-
 
 
 
@@ -51,6 +45,20 @@ public class StudentService {
     ) {
 
 
+        if (
+                studentRepository.existsByUsn(
+                        studentRequestDto.getUsn()
+                )
+        ) {
+
+            throw new RuntimeException(
+                    "USN already exists"
+            );
+
+        }
+
+
+
 
         if (
                 studentRepository.existsByEmail(
@@ -58,13 +66,13 @@ public class StudentService {
                 )
         ) {
 
-
             throw new RuntimeException(
                     "Email already exists"
             );
 
-
         }
+
+
 
 
 
@@ -78,7 +86,10 @@ public class StudentService {
 
 
         Student savedStudent =
-                studentRepository.save(student);
+                studentRepository.save(
+                        student
+                );
+
 
 
 
@@ -86,7 +97,6 @@ public class StudentService {
                 savedStudent,
                 StudentResponseDto.class
         );
-
 
     }
 
@@ -97,9 +107,7 @@ public class StudentService {
 
 
 
-
     public List<StudentResponseDto> getAllStudents() {
-
 
 
         List<Student> students =
@@ -115,6 +123,7 @@ public class StudentService {
                                 student,
                                 StudentResponseDto.class
                         )
+
                 )
 
                 .collect(Collectors.toList());
@@ -135,14 +144,17 @@ public class StudentService {
     ) {
 
 
-
         Student student =
                 studentRepository.findById(id)
+
                         .orElseThrow(
+
                                 () -> new RuntimeException(
                                         "Student not found"
                                 )
+
                         );
+
 
 
 
@@ -162,7 +174,6 @@ public class StudentService {
 
 
 
-
     public StudentResponseDto updateStudent(
 
             Long id,
@@ -170,7 +181,6 @@ public class StudentService {
             StudentRequestDto studentRequestDto
 
     ) {
-
 
 
 
@@ -190,8 +200,40 @@ public class StudentService {
 
 
         if (
+
+                !existingStudent.getUsn()
+                        .equals(
+                                studentRequestDto.getUsn()
+                        )
+
+                        &&
+
+                        studentRepository.existsByUsn(
+                                studentRequestDto.getUsn()
+                        )
+
+        ) {
+
+
+            throw new RuntimeException(
+                    "USN already exists"
+            );
+
+
+        }
+
+
+
+
+
+
+
+        if (
+
                 !existingStudent.getEmail()
-                        .equals(studentRequestDto.getEmail())
+                        .equals(
+                                studentRequestDto.getEmail()
+                        )
 
                         &&
 
@@ -215,10 +257,15 @@ public class StudentService {
 
 
 
+
+        existingStudent.setUsn(
+                studentRequestDto.getUsn()
+        );
+
+
         existingStudent.setName(
                 studentRequestDto.getName()
         );
-
 
 
         existingStudent.setEmail(
@@ -226,16 +273,16 @@ public class StudentService {
         );
 
 
-
         existingStudent.setDepartment(
                 studentRequestDto.getDepartment()
         );
 
 
-
         existingStudent.setAge(
                 studentRequestDto.getAge()
         );
+
+
 
 
 
@@ -272,11 +319,9 @@ public class StudentService {
     ) {
 
 
-
         studentRepository.deleteById(
                 id
         );
-
 
 
         return "Student deleted successfully";
@@ -308,15 +353,12 @@ public class StudentService {
 
 
 
-
         Sort sort =
-
                 direction.equalsIgnoreCase("asc")
 
                         ? Sort.by(sortBy).ascending()
 
                         : Sort.by(sortBy).descending();
-
 
 
 
@@ -331,23 +373,36 @@ public class StudentService {
 
 
 
+
         Page<Student> students;
 
 
 
 
+
         if (
+
                 keyword != null
+
                         &&
+
                         !keyword.isEmpty()
+
         ) {
 
 
             students =
                     studentRepository
-                            .findByNameContainingIgnoreCase(
+                            .findByNameContainingIgnoreCaseOrUsnContainingIgnoreCaseOrEmailContainingIgnoreCase(
+
                                     keyword,
+
+                                    keyword,
+
+                                    keyword,
+
                                     pageable
+
                             );
 
 
@@ -361,6 +416,8 @@ public class StudentService {
 
 
         }
+
+
 
 
 
