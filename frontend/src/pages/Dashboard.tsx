@@ -1,12 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 
+
 import {
     Users,
     Building,
     Activity
 } from "lucide-react";
 
+
 import { getStudents } from "../api/studentApi";
+
 
 
 function Dashboard() {
@@ -24,12 +27,20 @@ function Dashboard() {
 
 
 
+
     const departments =
         new Set(
+
             students.map(
-                (s:any) => s.department
+
+                student =>
+                    student.department
+
             )
+
         ).size;
+
+
 
 
 
@@ -46,6 +57,7 @@ function Dashboard() {
             </h1>
 
 
+
             <p className="text-gray-500 mt-2">
 
                 Student Management Overview
@@ -55,10 +67,16 @@ function Dashboard() {
 
 
 
+
+
             <div className="grid grid-cols-3 gap-6 mt-8">
 
 
+
+
+
                 <div className="bg-white p-6 rounded-2xl shadow">
+
 
                     <Users size={35} />
 
@@ -68,6 +86,7 @@ function Dashboard() {
                         Total Students
 
                     </p>
+
 
 
                     <h2 className="text-4xl font-bold">
@@ -83,10 +102,14 @@ function Dashboard() {
 
 
 
+
+
+
                 <div className="bg-white p-6 rounded-2xl shadow">
 
 
                     <Building size={35} />
+
 
 
                     <p className="text-gray-500 mt-5">
@@ -94,6 +117,7 @@ function Dashboard() {
                         Departments
 
                     </p>
+
 
 
                     <h2 className="text-4xl font-bold">
@@ -110,10 +134,14 @@ function Dashboard() {
 
 
 
+
+
+
                 <div className="bg-white p-6 rounded-2xl shadow">
 
 
                     <Activity size={35} />
+
 
 
                     <p className="text-gray-500 mt-5">
@@ -121,6 +149,7 @@ function Dashboard() {
                         System Status
 
                     </p>
+
 
 
                     <h2 className="text-green-600 text-2xl font-bold">
@@ -131,6 +160,8 @@ function Dashboard() {
 
 
                 </div>
+
+
 
 
             </div>
