@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 
+import toast from "react-hot-toast";
+
+
 import {
     getStudents,
     createStudent,
@@ -64,21 +67,27 @@ function Students() {
 
     const loadStudents = async () => {
 
+
         const data =
             await getStudents();
 
 
         setStudents(data);
 
+
     };
+
 
 
 
     useEffect(() => {
 
+
         loadStudents();
 
+
     }, []);
+
 
 
 
@@ -98,38 +107,70 @@ function Students() {
 
 
 
-        if (editId) {
+        try {
 
 
-            await updateStudent(
-                editId,
-                data
+            if (editId) {
+
+
+                await updateStudent(
+                    editId,
+                    data
+                );
+
+
+                toast.success(
+                    "Student updated successfully"
+                );
+
+
+                setEditId(null);
+
+
+            } else {
+
+
+                await createStudent(data);
+
+
+                toast.success(
+                    "Student added successfully"
+                );
+
+
+            }
+
+
+
+
+            setName("");
+            setEmail("");
+            setDepartment("");
+            setAge("");
+
+
+
+            loadStudents();
+
+
+
+        } catch (error) {
+
+
+            console.log(error);
+
+
+            toast.error(
+                "Operation failed"
             );
-
-
-            setEditId(null);
-
-
-        } else {
-
-
-            await createStudent(data);
 
 
         }
 
 
-
-        setName("");
-        setEmail("");
-        setDepartment("");
-        setAge("");
-
-
-        loadStudents();
-
-
     };
+
+
 
 
 
@@ -148,10 +189,14 @@ function Students() {
 
         setDepartment(student.department);
 
-        setAge(String(student.age));
+        setAge(
+            String(student.age)
+        );
 
 
     };
+
+
 
 
 
@@ -169,16 +214,46 @@ function Students() {
         ) {
 
 
-            await deleteStudent(id);
+            try {
 
 
-            loadStudents();
+                await deleteStudent(id);
+
+
+
+                toast.success(
+                    "Student deleted successfully"
+                );
+
+
+
+                loadStudents();
+
+
+
+            } catch (error) {
+
+
+
+                console.log(error);
+
+
+
+                toast.error(
+                    "Delete failed"
+                );
+
+
+            }
 
 
         }
 
 
     };
+
+
+
 
 
 
@@ -206,6 +281,8 @@ function Students() {
                     .includes(search.toLowerCase())
 
         );
+
+
 
 
 
@@ -241,20 +318,17 @@ function Students() {
 
 
 
+
+
             <div className="bg-white rounded-2xl shadow p-6 mb-8">
 
 
                 <h2 className="font-bold text-lg mb-5">
 
-
-                    {
-                        editId
-                            ? "Update Student"
-                            : "Add New Student"
-                    }
-
+                    {editId ? "Update Student" : "Add New Student"}
 
                 </h2>
+
 
 
 
@@ -263,67 +337,38 @@ function Students() {
 
 
                     <input
-
                         value={name}
-
-                        onChange={
-                            e => setName(e.target.value)
-                        }
-
+                        onChange={e => setName(e.target.value)}
                         placeholder="Name"
-
                         className="border rounded-xl p-3"
-
                     />
 
 
 
                     <input
-
                         value={email}
-
-                        onChange={
-                            e => setEmail(e.target.value)
-                        }
-
+                        onChange={e => setEmail(e.target.value)}
                         placeholder="Email"
-
                         className="border rounded-xl p-3"
-
                     />
 
 
 
                     <input
-
                         value={department}
-
-                        onChange={
-                            e => setDepartment(e.target.value)
-                        }
-
+                        onChange={e => setDepartment(e.target.value)}
                         placeholder="Department"
-
                         className="border rounded-xl p-3"
-
                     />
 
 
 
                     <input
-
                         value={age}
-
-                        onChange={
-                            e => setAge(e.target.value)
-                        }
-
+                        onChange={e => setAge(e.target.value)}
                         placeholder="Age"
-
                         type="number"
-
                         className="border rounded-xl p-3"
-
                     />
 
 
@@ -337,16 +382,9 @@ function Students() {
 
                     >
 
-
                         <Plus size={18}/>
 
-
-                        {
-                            editId
-                                ? "Update"
-                                : "Add"
-                        }
-
+                        {editId ? "Update" : "Add"}
 
                     </button>
 
@@ -355,6 +393,9 @@ function Students() {
 
 
             </div>
+
+
+
 
 
 
@@ -392,45 +433,8 @@ function Students() {
 
 
 
+
                 <table className="w-full">
-
-
-                    <thead className="bg-gray-100">
-
-
-                    <tr>
-
-
-                        <th className="p-4">
-
-                            ID
-
-                        </th>
-
-
-                        <th>Name</th>
-
-
-                        <th>Email</th>
-
-
-                        <th>Department</th>
-
-
-                        <th>Age</th>
-
-
-                        <th>Actions</th>
-
-
-                    </tr>
-
-
-                    </thead>
-
-
-
-
 
 
                     <tbody>
@@ -442,56 +446,33 @@ function Students() {
 
                             student => (
 
-
                                 <tr
 
                                     key={student.id}
 
-                                    className="border-t text-center hover:bg-gray-50"
+                                    className="border-t text-center"
 
                                 >
 
 
-
                                     <td className="p-4">
-
-                                        {student.id}
-
-                                    </td>
-
-
-
-                                    <td>
-
                                         {student.name}
-
                                     </td>
 
 
-
                                     <td>
-
                                         {student.email}
-
                                     </td>
 
 
-
                                     <td>
-
                                         {student.department}
-
                                     </td>
-
 
 
                                     <td>
-
                                         {student.age}
-
                                     </td>
-
-
 
 
 
@@ -499,38 +480,22 @@ function Students() {
 
 
                                         <button
-
-                                            onClick={
-                                                () => handleEdit(student)
-                                            }
-
+                                            onClick={() => handleEdit(student)}
                                             className="text-blue-600"
-
                                         >
 
-
                                             <Edit />
-
 
                                         </button>
 
 
 
-
-
                                         <button
-
-                                            onClick={
-                                                () => handleDelete(student.id)
-                                            }
-
+                                            onClick={() => handleDelete(student.id)}
                                             className="text-red-600"
-
                                         >
 
-
                                             <Trash2 />
-
 
                                         </button>
 
@@ -539,7 +504,6 @@ function Students() {
 
 
                                 </tr>
-
 
                             )
 
@@ -562,6 +526,7 @@ function Students() {
     );
 
 }
+
 
 
 export default Students;

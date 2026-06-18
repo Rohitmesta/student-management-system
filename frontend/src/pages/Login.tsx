@@ -4,6 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useNavigate } from "react-router-dom";
 
+import toast from "react-hot-toast";
+
+
 import {
     GraduationCap,
     Lock,
@@ -44,6 +47,7 @@ function Login() {
 
 
 
+
     const submit = async (
         data: LoginForm
     ) => {
@@ -54,6 +58,7 @@ function Login() {
 
             const response =
                 await login(data);
+
 
 
 
@@ -71,6 +76,12 @@ function Login() {
 
 
 
+            toast.success(
+                "Login successful"
+            );
+
+
+
             navigate("/dashboard");
 
 
@@ -81,7 +92,8 @@ function Login() {
             console.log(error);
 
 
-            alert(
+
+            toast.error(
                 "Invalid username or password"
             );
 
@@ -106,9 +118,7 @@ function Login() {
             <div className="hidden md:flex w-1/2 bg-slate-950 text-white flex-col justify-center items-center p-10">
 
 
-
                 <GraduationCap size={90} />
-
 
 
                 <h1 className="text-5xl font-bold mt-6">
@@ -118,13 +128,11 @@ function Login() {
                 </h1>
 
 
-
                 <p className="text-gray-300 text-xl mt-5 text-center">
 
                     Smart Student Management Platform
 
                 </p>
-
 
 
             </div>
@@ -134,9 +142,7 @@ function Login() {
 
 
 
-
             <div className="flex flex-1 justify-center items-center">
-
 
 
                 <form
@@ -148,7 +154,6 @@ function Login() {
                     className="bg-white w-96 rounded-3xl shadow-xl p-10"
 
                 >
-
 
 
                     <h2 className="text-3xl font-bold">
@@ -164,7 +169,6 @@ function Login() {
                         Login to continue
 
                     </p>
-
 
 
 
@@ -228,7 +232,6 @@ function Login() {
 
 
 
-
                     <p className="text-red-500 text-sm mb-5">
 
                         {errors.password?.message}
@@ -255,14 +258,10 @@ function Login() {
 
 
 
-
                 </form>
 
 
-
             </div>
-
-
 
 
         </div>

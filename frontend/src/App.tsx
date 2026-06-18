@@ -1,11 +1,35 @@
 import AppRoutes from "./routes/AppRoutes";
 
+import {
+    Toaster
+} from "react-hot-toast";
+
+
 
 function App() {
 
-    return <AppRoutes />;
+
+    return (
+
+        <>
+
+
+            <AppRoutes />
+
+
+            <Toaster
+
+                position="top-right"
+
+            />
+
+
+        </>
+
+    );
 
 }
+
 
 
 export default App;
