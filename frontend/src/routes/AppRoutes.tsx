@@ -27,9 +27,12 @@ function AppRoutes() {
             />
 
 
+
             <Route element={<ProtectedRoute />}>
 
+
                 <Route element={<DashboardLayout />}>
+
 
                     <Route
                         path="/dashboard"
@@ -44,6 +47,7 @@ function AppRoutes() {
 
 
                 </Route>
+
 
             </Route>
 
