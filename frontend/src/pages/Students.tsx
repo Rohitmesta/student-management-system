@@ -8,6 +8,15 @@ import {
 } from "../api/studentApi";
 
 
+import {
+    Edit,
+    Trash2,
+    Plus,
+    Search
+} from "lucide-react";
+
+
+
 type Student = {
 
     id: number;
@@ -19,11 +28,16 @@ type Student = {
 };
 
 
+
 function Students() {
 
 
     const [students, setStudents] =
         useState<Student[]>([]);
+
+
+    const [search, setSearch] =
+        useState("");
 
 
     const [name, setName] =
@@ -47,10 +61,12 @@ function Students() {
 
 
 
+
     const loadStudents = async () => {
 
         const data =
             await getStudents();
+
 
         setStudents(data);
 
@@ -67,6 +83,7 @@ function Students() {
 
 
 
+
     const handleSubmit = async () => {
 
 
@@ -78,6 +95,7 @@ function Students() {
             age: Number(age)
 
         };
+
 
 
         if (editId) {
@@ -101,6 +119,7 @@ function Students() {
         }
 
 
+
         setName("");
         setEmail("");
         setDepartment("");
@@ -111,6 +130,7 @@ function Students() {
 
 
     };
+
 
 
 
@@ -128,12 +148,11 @@ function Students() {
 
         setDepartment(student.department);
 
-        setAge(
-            String(student.age)
-        );
+        setAge(String(student.age));
 
 
     };
+
 
 
 
@@ -143,13 +162,51 @@ function Students() {
     ) => {
 
 
-        await deleteStudent(id);
+        if (
+            confirm(
+                "Delete this student?"
+            )
+        ) {
 
 
-        loadStudents();
+            await deleteStudent(id);
+
+
+            loadStudents();
+
+
+        }
 
 
     };
+
+
+
+
+
+    const filteredStudents =
+        students.filter(
+
+            student =>
+
+                student.name
+                    .toLowerCase()
+                    .includes(search.toLowerCase())
+
+                ||
+
+                student.email
+                    .toLowerCase()
+                    .includes(search.toLowerCase())
+
+                ||
+
+                student.department
+                    .toLowerCase()
+                    .includes(search.toLowerCase())
+
+        );
+
 
 
 
@@ -160,97 +217,21 @@ function Students() {
         <div>
 
 
-            <h1 className="text-3xl font-bold mb-8">
-
-                Students 🎓
-
-            </h1>
+            <div className="mb-8">
 
 
+                <h1 className="text-3xl font-bold">
 
-            <div className="bg-white p-6 rounded-xl shadow mb-8">
+                    Students 🎓
 
-
-                <input
-
-                    value={name}
-
-                    onChange={
-                        e => setName(e.target.value)
-                    }
-
-                    placeholder="Name"
-
-                    className="border p-2 mr-2"
-
-                />
+                </h1>
 
 
+                <p className="text-gray-500">
 
-                <input
+                    Manage student information
 
-                    value={email}
-
-                    onChange={
-                        e => setEmail(e.target.value)
-                    }
-
-                    placeholder="Email"
-
-                    className="border p-2 mr-2"
-
-                />
-
-
-
-                <input
-
-                    value={department}
-
-                    onChange={
-                        e => setDepartment(e.target.value)
-                    }
-
-                    placeholder="Department"
-
-                    className="border p-2 mr-2"
-
-                />
-
-
-
-                <input
-
-                    value={age}
-
-                    onChange={
-                        e => setAge(e.target.value)
-                    }
-
-                    placeholder="Age"
-
-                    type="number"
-
-                    className="border p-2 mr-2"
-
-                />
-
-
-
-
-                <button
-
-                    onClick={handleSubmit}
-
-                    className="bg-blue-600 text-white px-6 py-2 rounded"
-
-                >
-
-
-                    {editId ? "Update" : "Add"}
-
-
-                </button>
+                </p>
 
 
             </div>
@@ -259,107 +240,321 @@ function Students() {
 
 
 
-            <table className="bg-white w-full rounded-xl shadow">
+
+            <div className="bg-white rounded-2xl shadow p-6 mb-8">
 
 
-                <thead>
+                <h2 className="font-bold text-lg mb-5">
 
 
-                <tr>
-
-                    <th>ID</th>
-
-                    <th>Name</th>
-
-                    <th>Email</th>
-
-                    <th>Department</th>
-
-                    <th>Age</th>
-
-                    <th>Actions</th>
-
-                </tr>
+                    {
+                        editId
+                            ? "Update Student"
+                            : "Add New Student"
+                    }
 
 
-                </thead>
+                </h2>
 
 
 
 
-                <tbody>
+                <div className="grid grid-cols-5 gap-4">
 
 
-                {
+                    <input
 
-                    students.map(
-                        student => (
+                        value={name}
 
+                        onChange={
+                            e => setName(e.target.value)
+                        }
 
-                            <tr key={student.id}>
+                        placeholder="Name"
 
+                        className="border rounded-xl p-3"
 
-                                <td>{student.id}</td>
-
-                                <td>{student.name}</td>
-
-                                <td>{student.email}</td>
-
-                                <td>{student.department}</td>
-
-                                <td>{student.age}</td>
-
-
-                                <td>
-
-
-                                    <button
-
-                                        onClick={
-                                            () => handleEdit(student)
-                                        }
-
-                                        className="text-blue-600 mr-4"
-
-                                    >
-
-                                        Edit
-
-                                    </button>
+                    />
 
 
 
-                                    <button
+                    <input
 
-                                        onClick={
-                                            () => handleDelete(student.id)
-                                        }
+                        value={email}
 
-                                        className="text-red-600"
+                        onChange={
+                            e => setEmail(e.target.value)
+                        }
 
-                                    >
+                        placeholder="Email"
 
-                                        Delete
+                        className="border rounded-xl p-3"
 
-                                    </button>
-
-
-                                </td>
+                    />
 
 
-                            </tr>
 
+                    <input
+
+                        value={department}
+
+                        onChange={
+                            e => setDepartment(e.target.value)
+                        }
+
+                        placeholder="Department"
+
+                        className="border rounded-xl p-3"
+
+                    />
+
+
+
+                    <input
+
+                        value={age}
+
+                        onChange={
+                            e => setAge(e.target.value)
+                        }
+
+                        placeholder="Age"
+
+                        type="number"
+
+                        className="border rounded-xl p-3"
+
+                    />
+
+
+
+
+                    <button
+
+                        onClick={handleSubmit}
+
+                        className="bg-slate-950 text-white rounded-xl flex justify-center items-center gap-2"
+
+                    >
+
+
+                        <Plus size={18}/>
+
+
+                        {
+                            editId
+                                ? "Update"
+                                : "Add"
+                        }
+
+
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+            <div className="bg-white rounded-2xl shadow p-6">
+
+
+                <div className="flex items-center border rounded-xl p-3 mb-5">
+
+
+                    <Search />
+
+
+                    <input
+
+                        value={search}
+
+                        onChange={
+                            e => setSearch(e.target.value)
+                        }
+
+                        placeholder="Search students..."
+
+                        className="outline-none ml-3 flex-1"
+
+                    />
+
+
+                </div>
+
+
+
+
+
+
+                <table className="w-full">
+
+
+                    <thead className="bg-gray-100">
+
+
+                    <tr>
+
+
+                        <th className="p-4">
+
+                            ID
+
+                        </th>
+
+
+                        <th>Name</th>
+
+
+                        <th>Email</th>
+
+
+                        <th>Department</th>
+
+
+                        <th>Age</th>
+
+
+                        <th>Actions</th>
+
+
+                    </tr>
+
+
+                    </thead>
+
+
+
+
+
+
+                    <tbody>
+
+
+                    {
+
+                        filteredStudents.map(
+
+                            student => (
+
+
+                                <tr
+
+                                    key={student.id}
+
+                                    className="border-t text-center hover:bg-gray-50"
+
+                                >
+
+
+
+                                    <td className="p-4">
+
+                                        {student.id}
+
+                                    </td>
+
+
+
+                                    <td>
+
+                                        {student.name}
+
+                                    </td>
+
+
+
+                                    <td>
+
+                                        {student.email}
+
+                                    </td>
+
+
+
+                                    <td>
+
+                                        {student.department}
+
+                                    </td>
+
+
+
+                                    <td>
+
+                                        {student.age}
+
+                                    </td>
+
+
+
+
+
+                                    <td className="space-x-5">
+
+
+                                        <button
+
+                                            onClick={
+                                                () => handleEdit(student)
+                                            }
+
+                                            className="text-blue-600"
+
+                                        >
+
+
+                                            <Edit />
+
+
+                                        </button>
+
+
+
+
+
+                                        <button
+
+                                            onClick={
+                                                () => handleDelete(student.id)
+                                            }
+
+                                            className="text-red-600"
+
+                                        >
+
+
+                                            <Trash2 />
+
+
+                                        </button>
+
+
+                                    </td>
+
+
+                                </tr>
+
+
+                            )
 
                         )
-                    )
 
-                }
-
-
-                </tbody>
+                    }
 
 
-            </table>
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
 
 
         </div>
