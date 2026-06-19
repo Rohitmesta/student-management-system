@@ -6,7 +6,7 @@ import { AxiosError } from "axios";
 
 
 import {
-    getStudents,
+    getStudentsPage,
     createStudent,
     updateStudent,
     deleteStudent
@@ -14,26 +14,33 @@ import {
 
 
 import {
+    getDepartments
+} from "../api/departmentApi";
+
+
+import type {
+    Department
+} from "../api/departmentApi";
+
+
+import {
     Edit,
     Trash2,
     Plus,
-    Search
+    Search,
+    X
 } from "lucide-react";
+
 
 
 
 type Student = {
 
     id: number;
-
     usn: string;
-
     name: string;
-
     email: string;
-
-    department: string;
-
+    department: Department | null;
     age: number;
 
 };
@@ -49,8 +56,24 @@ function Students() {
         useState<Student[]>([]);
 
 
+    const [departments, setDepartments] =
+        useState<Department[]>([]);
+
+
+    const [page, setPage] =
+        useState(0);
+
+
+    const [totalPages, setTotalPages] =
+        useState(0);
+
+
     const [search, setSearch] =
         useState("");
+
+
+    const [loading, setLoading] =
+        useState(false);
 
 
     const [usn, setUsn] =
@@ -65,7 +88,7 @@ function Students() {
         useState("");
 
 
-    const [department, setDepartment] =
+    const [departmentId, setDepartmentId] =
         useState("");
 
 
@@ -88,19 +111,14 @@ function Students() {
     ) => {
 
 
-        if (
-            error instanceof AxiosError
-        ) {
+        if (error instanceof AxiosError) {
 
 
             const data =
                 error.response?.data;
 
 
-
-            if (
-                data?.message
-            ) {
+            if (data?.message) {
 
                 toast.error(data.message);
 
@@ -109,28 +127,6 @@ function Students() {
             }
 
 
-
-            if (data) {
-
-
-                const firstError =
-                    Object.values(data)[0];
-
-
-                if (firstError) {
-
-
-                    toast.error(
-                        String(firstError)
-                    );
-
-
-                    return;
-
-                }
-
-            }
-
         }
 
 
@@ -138,8 +134,8 @@ function Students() {
             "Something went wrong"
         );
 
-    };
 
+    };
 
 
 
@@ -154,14 +150,28 @@ function Students() {
         try {
 
 
+            setLoading(true);
+
+
             const data =
-                await getStudents();
+                await getStudentsPage(
+                    page,
+                    5,
+                    search
+                );
 
 
-            setStudents(data);
+            setStudents(data.content);
 
 
-        } catch (error) {
+            setTotalPages(
+                data.totalPages
+            );
+
+
+        }
+
+        catch (error) {
 
 
             showError(error);
@@ -169,8 +179,49 @@ function Students() {
 
         }
 
+        finally {
+
+
+            setLoading(false);
+
+
+        }
+
+
     };
 
+
+
+
+
+
+
+
+    const loadDepartments = async () => {
+
+
+        try {
+
+
+            const data =
+                await getDepartments();
+
+
+            setDepartments(data);
+
+
+        }
+
+        catch(error) {
+
+
+            showError(error);
+
+
+        }
+
+
+    };
 
 
 
@@ -184,8 +235,43 @@ function Students() {
         loadStudents();
 
 
+    }, [page, search]);
+
+
+
+
+    useEffect(() => {
+
+
+        loadDepartments();
+
+
     }, []);
 
+
+
+
+
+
+
+
+    const clearForm = () => {
+
+
+        setUsn("");
+
+        setName("");
+
+        setEmail("");
+
+        setDepartmentId("");
+
+        setAge("");
+
+        setEditId(null);
+
+
+    };
 
 
 
@@ -200,14 +286,14 @@ function Students() {
         const data = {
 
             usn,
-
             name,
-
             email,
 
-            department,
+            departmentId:
+                Number(departmentId),
 
-            age: Number(age)
+            age:
+                Number(age)
 
         };
 
@@ -216,7 +302,7 @@ function Students() {
         try {
 
 
-            if (editId) {
+            if(editId){
 
 
                 await updateStudent(
@@ -226,15 +312,14 @@ function Students() {
 
 
                 toast.success(
-                    "Student updated successfully"
+                    "Student updated"
                 );
 
 
-                setEditId(null);
+            }
 
 
-            } else {
-
+            else {
 
 
                 await createStudent(
@@ -243,7 +328,7 @@ function Students() {
 
 
                 toast.success(
-                    "Student added successfully"
+                    "Student added"
                 );
 
 
@@ -251,20 +336,16 @@ function Students() {
 
 
 
-
-            setUsn("");
-            setName("");
-            setEmail("");
-            setDepartment("");
-            setAge("");
-
+            clearForm();
 
 
             loadStudents();
 
 
 
-        } catch (error) {
+        }
+
+        catch(error){
 
 
             showError(error);
@@ -274,7 +355,6 @@ function Students() {
 
 
     };
-
 
 
 
@@ -296,11 +376,18 @@ function Students() {
 
         setEmail(student.email);
 
-        setDepartment(student.department);
+
+        setDepartmentId(
+            String(
+                student.department?.id || ""
+            )
+        );
+
 
         setAge(
             String(student.age)
         );
+
 
     };
 
@@ -312,40 +399,26 @@ function Students() {
 
 
     const handleDelete = async (
-        id: number
+        id:number
     ) => {
 
 
-        if (
-            confirm("Delete this student?")
-        ) {
+        if(confirm("Delete student?")){
 
 
-            try {
+            await deleteStudent(id);
 
 
-                await deleteStudent(id);
+            toast.success(
+                "Student deleted"
+            );
 
 
-                toast.success(
-                    "Student deleted successfully"
-                );
-
-
-                loadStudents();
-
-
-
-            } catch (error) {
-
-
-                showError(error);
-
-
-            }
+            loadStudents();
 
 
         }
+
 
     };
 
@@ -358,68 +431,47 @@ function Students() {
 
 
 
-    const filteredStudents =
-        students.filter(
-
-            student =>
-
-
-                student.usn
-                    .toLowerCase()
-                    .includes(search.toLowerCase())
-
-                ||
-
-                student.name
-                    .toLowerCase()
-                    .includes(search.toLowerCase())
-
-                ||
-
-                student.email
-                    .toLowerCase()
-                    .includes(search.toLowerCase())
-
-                ||
-
-                student.department
-                    .toLowerCase()
-                    .includes(search.toLowerCase())
-
-        );
-
-
-
-
-
-
-
-
-
     return (
 
-        <div>
 
-
-            <h1 className="text-3xl font-bold mb-8">
-
-                Students 🎓
-
-            </h1>
+        <div className="space-y-8">
 
 
 
 
 
+            <div>
+
+
+                <h1 className="text-3xl font-bold">
+
+                    Students 🎓
+
+                </h1>
+
+
+                <p className="text-gray-500">
+
+                    Manage student records
+
+                </p>
+
+
+            </div>
 
 
 
-            <div className="bg-white rounded-2xl shadow p-6 mb-8">
 
 
-                <h2 className="font-bold text-lg mb-5">
 
-                    {editId ? "Update Student" : "Add New Student"}
+
+
+            <div className="bg-white rounded-2xl shadow p-6">
+
+
+                <h2 className="text-xl font-semibold mb-5">
+
+                    {editId ? "Update Student" : "Add Student"}
 
                 </h2>
 
@@ -427,112 +479,79 @@ function Students() {
 
 
 
+                <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4">
 
-                <div className="grid grid-cols-6 gap-4">
+
+                    <input value={usn} onChange={e=>setUsn(e.target.value)} placeholder="USN" className="border rounded-xl p-3"/>
 
 
-                    <input
+                    <input value={name} onChange={e=>setName(e.target.value)} placeholder="Name" className="border rounded-xl p-3"/>
 
-                        value={usn}
 
-                        onChange={
-                            e => setUsn(e.target.value)
-                        }
-
-                        placeholder="USN"
-
-                        className="border rounded-xl p-3"
-
-                    />
+                    <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email" className="border rounded-xl p-3"/>
 
 
 
-                    <input
-
-                        value={name}
-
-                        onChange={
-                            e => setName(e.target.value)
-                        }
-
-                        placeholder="Name"
-
-                        className="border rounded-xl p-3"
-
-                    />
+                    <select value={departmentId} onChange={e=>setDepartmentId(e.target.value)} className="border rounded-xl p-3">
 
 
-
-                    <input
-
-                        value={email}
-
-                        onChange={
-                            e => setEmail(e.target.value)
-                        }
-
-                        placeholder="Email"
-
-                        className="border rounded-xl p-3"
-
-                    />
+                        <option value="">Department</option>
 
 
+                        {departments.map(d=>
 
-                    <input
+                            <option key={d.id} value={d.id}>
 
-                        value={department}
+                                {d.code}
 
-                        onChange={
-                            e => setDepartment(e.target.value)
-                        }
+                            </option>
 
-                        placeholder="Department"
-
-                        className="border rounded-xl p-3"
-
-                    />
+                        )}
 
 
-
-                    <input
-
-                        value={age}
-
-                        onChange={
-                            e => setAge(e.target.value)
-                        }
-
-                        placeholder="Age"
-
-                        type="number"
-
-                        className="border rounded-xl p-3"
-
-                    />
+                    </select>
 
 
 
 
-                    <button
-
-                        onClick={handleSubmit}
-
-                        className="bg-slate-950 text-white rounded-xl flex items-center justify-center gap-2"
-
-                    >
+                    <input value={age} onChange={e=>setAge(e.target.value)} placeholder="Age" type="number" className="border rounded-xl p-3"/>
 
 
-                        <Plus size={18}/>
 
 
-                        {editId ? "Update" : "Add"}
+                    <button onClick={handleSubmit} className="bg-blue-600 text-white rounded-xl flex justify-center items-center gap-2">
+
+
+                        <Plus/>
+
+
+                        {editId ? "Update":"Add"}
 
 
                     </button>
 
 
                 </div>
+
+
+
+
+
+                {editId &&
+
+
+                    <button onClick={clearForm} className="mt-4 text-red-500 flex gap-2">
+
+
+                        <X/>
+
+                        Cancel Edit
+
+
+                    </button>
+
+                }
+
 
 
             </div>
@@ -548,25 +567,13 @@ function Students() {
             <div className="bg-white rounded-2xl shadow p-6">
 
 
-                <div className="flex border rounded-xl p-3 mb-5">
+                <div className="flex border rounded-xl p-3 mb-6">
 
 
-                    <Search />
+                    <Search/>
 
 
-                    <input
-
-                        value={search}
-
-                        onChange={
-                            e => setSearch(e.target.value)
-                        }
-
-                        placeholder="Search USN, name, email..."
-
-                        className="outline-none ml-3 flex-1"
-
-                    />
+                    <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search student..." className="outline-none ml-3 flex-1"/>
 
 
                 </div>
@@ -576,110 +583,123 @@ function Students() {
 
 
 
-                <table className="w-full">
+                <table className="w-full text-center">
+
+
+                    <thead className="text-gray-500 border-b">
+
+
+                    <tr>
+
+                        <th className="p-3">USN</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Age</th>
+                        <th>Action</th>
+
+                    </tr>
+
+
+                    </thead>
+
+
+
 
 
                     <tbody>
 
 
-                    {
+                    {loading &&
 
-                        filteredStudents.map(student => (
+                        <tr>
 
+                            <td colSpan={6} className="p-8">
 
-                            <tr
+                                Loading students...
 
-                                key={student.id}
+                            </td>
 
-                                className="border-t text-center"
-
-                            >
-
-
-                                <td className="p-4">
-
-                                    {student.usn}
-
-                                </td>
-
-
-
-                                <td>
-
-                                    {student.name}
-
-                                </td>
-
-
-
-                                <td>
-
-                                    {student.email}
-
-                                </td>
-
-
-
-                                <td>
-
-                                    {student.department}
-
-                                </td>
-
-
-
-                                <td>
-
-                                    {student.age}
-
-                                </td>
-
-
-
-                                <td className="space-x-5">
-
-
-                                    <button
-
-                                        onClick={
-                                            () => handleEdit(student)
-                                        }
-
-                                        className="text-blue-600"
-
-                                    >
-
-                                        <Edit />
-
-                                    </button>
-
-
-
-
-                                    <button
-
-                                        onClick={
-                                            () => handleDelete(student.id)
-                                        }
-
-                                        className="text-red-600"
-
-                                    >
-
-                                        <Trash2 />
-
-                                    </button>
-
-
-                                </td>
-
-
-                            </tr>
-
-
-                        ))
+                        </tr>
 
                     }
+
+
+
+
+                    {!loading && students.length===0 &&
+
+                        <tr>
+
+                            <td colSpan={6} className="p-8">
+
+                                No students found
+
+                            </td>
+
+                        </tr>
+
+                    }
+
+
+
+
+
+
+                    {!loading && students.map(student=>
+
+                        <tr key={student.id} className="border-b hover:bg-gray-50">
+
+
+                            <td className="p-4 font-medium">{student.usn}</td>
+
+                            <td>{student.name}</td>
+
+                            <td>{student.email}</td>
+
+
+                            <td>
+
+
+                                <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+
+
+                                    {student.department?.code || "None"}
+
+
+                                </span>
+
+
+                            </td>
+
+
+                            <td>{student.age}</td>
+
+
+
+                            <td className="space-x-4">
+
+
+                                <button onClick={()=>handleEdit(student)} className="text-blue-600">
+
+                                    <Edit/>
+
+                                </button>
+
+
+                                <button onClick={()=>handleDelete(student.id)} className="text-red-600">
+
+                                    <Trash2/>
+
+                                </button>
+
+
+                            </td>
+
+
+                        </tr>
+
+                    )}
 
 
                     </tbody>
@@ -688,12 +708,49 @@ function Students() {
                 </table>
 
 
+
+
+
+
+
+
+                <div className="flex justify-center gap-5 mt-6">
+
+
+                    <button disabled={page===0} onClick={()=>setPage(page-1)}>
+
+                        Previous
+
+                    </button>
+
+
+
+                    <span>
+
+                        Page {page+1}/{totalPages}
+
+                    </span>
+
+
+
+                    <button disabled={page+1>=totalPages} onClick={()=>setPage(page+1)}>
+
+                        Next
+
+                    </button>
+
+
+                </div>
+
+
             </div>
 
 
         </div>
 
+
     );
+
 
 }
 

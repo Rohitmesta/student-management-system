@@ -1,5 +1,7 @@
 import axios from "./axios";
 
+import type { Department } from "./departmentApi";
+
 
 
 export type Student = {
@@ -12,14 +14,11 @@ export type Student = {
 
     email: string;
 
-    department: string;
+    department: Department | null;
 
     age: number;
 
 };
-
-
-
 
 
 
@@ -31,7 +30,7 @@ export type StudentRequest = {
 
     email: string;
 
-    department: string;
+    departmentId: number;
 
     age: number;
 
@@ -39,12 +38,21 @@ export type StudentRequest = {
 
 
 
+export type StudentPage = {
 
+    content: Student[];
 
+    totalPages: number;
 
+    totalElements: number;
 
+    number: number;
 
+    size: number;
 
+};
+
+// NORMAL GET (old one)
 export const getStudents = async () => {
 
 
@@ -60,23 +68,41 @@ export const getStudents = async () => {
 };
 
 
+// PAGINATION GET (new)
+export const getStudentsPage = async (
 
+    page: number,
 
+    size: number,
 
+    keyword: string = ""
 
-
-
-
-
-export const createStudent = async (
-    data: StudentRequest
 ) => {
 
 
     const response =
-        await axios.post(
-            "/api/students",
-            data
+        await axios.get<StudentPage>(
+
+            "/api/students/paged",
+
+            {
+
+                params: {
+
+                    page,
+
+                    size,
+
+                    sortBy: "id",
+
+                    direction: "asc",
+
+                    keyword
+
+                }
+
+            }
+
         );
 
 
@@ -85,13 +111,27 @@ export const createStudent = async (
 
 };
 
+export const createStudent = async (
+
+    data: StudentRequest
+
+) => {
 
 
+    const response =
+        await axios.post(
+
+            "/api/students",
+
+            data
+
+        );
 
 
+    return response.data;
 
 
-
+};
 
 
 export const updateStudent = async (
@@ -105,8 +145,11 @@ export const updateStudent = async (
 
     const response =
         await axios.put(
+
             `/api/students/${id}`,
+
             data
+
         );
 
 
@@ -116,22 +159,18 @@ export const updateStudent = async (
 };
 
 
-
-
-
-
-
-
-
-
 export const deleteStudent = async (
+
     id: number
+
 ) => {
 
 
     const response =
         await axios.delete(
+
             `/api/students/${id}`
+
         );
 
 

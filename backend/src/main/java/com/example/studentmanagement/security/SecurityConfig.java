@@ -103,7 +103,8 @@ public class SecurityConfig {
 
                                 HttpMethod.GET,
 
-                                "/api/students/**"
+                                "/api/students/**",
+                                "/api/departments/**"
 
                         )
                         .hasAnyRole(
@@ -118,7 +119,8 @@ public class SecurityConfig {
 
                                 HttpMethod.POST,
 
-                                "/api/students/**"
+                                "/api/students/**",
+                                "/api/departments/**"
 
                         )
                         .hasRole("ADMIN")
@@ -130,7 +132,8 @@ public class SecurityConfig {
 
                                 HttpMethod.PUT,
 
-                                "/api/students/**"
+                                "/api/students/**",
+                                "/api/departments/**"
 
                         )
                         .hasRole("ADMIN")
@@ -142,7 +145,8 @@ public class SecurityConfig {
 
                                 HttpMethod.DELETE,
 
-                                "/api/students/**"
+                                "/api/students/**",
+                                "/api/departments/**"
 
                         )
                         .hasRole("ADMIN")

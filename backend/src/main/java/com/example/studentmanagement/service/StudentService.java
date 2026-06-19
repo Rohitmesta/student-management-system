@@ -3,7 +3,11 @@ package com.example.studentmanagement.service;
 
 import com.example.studentmanagement.dto.StudentRequestDto;
 import com.example.studentmanagement.dto.StudentResponseDto;
+
+import com.example.studentmanagement.model.Department;
 import com.example.studentmanagement.model.Student;
+
+import com.example.studentmanagement.repository.DepartmentRepository;
 import com.example.studentmanagement.repository.StudentRepository;
 
 
@@ -11,16 +15,14 @@ import org.modelmapper.ModelMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 
 import org.springframework.stereotype.Service;
 
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 
 
@@ -33,21 +35,25 @@ public class StudentService {
 
 
     @Autowired
+    private DepartmentRepository departmentRepository;
+
+
+    @Autowired
     private ModelMapper modelMapper;
 
 
 
 
 
-
     public StudentResponseDto saveStudent(
-            StudentRequestDto studentRequestDto
+            StudentRequestDto request
     ) {
+
 
 
         if (
                 studentRepository.existsByUsn(
-                        studentRequestDto.getUsn()
+                        request.getUsn()
                 )
         ) {
 
@@ -59,10 +65,9 @@ public class StudentService {
 
 
 
-
         if (
                 studentRepository.existsByEmail(
-                        studentRequestDto.getEmail()
+                        request.getEmail()
                 )
         ) {
 
@@ -76,25 +81,62 @@ public class StudentService {
 
 
 
+        Department department =
+                departmentRepository.findById(
+                                request.getDepartmentId()
+                        )
+
+                        .orElseThrow(
+                                () -> new RuntimeException(
+                                        "Department not found"
+                                )
+                        );
+
+
+
+
 
         Student student =
-                modelMapper.map(
-                        studentRequestDto,
-                        Student.class
-                );
+                new Student();
+
+
+        student.setUsn(
+                request.getUsn()
+        );
+
+
+        student.setName(
+                request.getName()
+        );
+
+
+        student.setEmail(
+                request.getEmail()
+        );
+
+
+        student.setAge(
+                request.getAge()
+        );
+
+
+        student.setDepartment(
+                department
+        );
 
 
 
-        Student savedStudent =
+
+
+        Student saved =
                 studentRepository.save(
                         student
                 );
 
 
 
-
         return modelMapper.map(
-                savedStudent,
+                saved,
                 StudentResponseDto.class
         );
 
@@ -107,15 +149,13 @@ public class StudentService {
 
 
 
+
     public List<StudentResponseDto> getAllStudents() {
 
 
-        List<Student> students =
-                studentRepository.findAll();
+        return studentRepository.findAll()
 
-
-
-        return students.stream()
+                .stream()
 
                 .map(student ->
 
@@ -123,11 +163,11 @@ public class StudentService {
                                 student,
                                 StudentResponseDto.class
                         )
-
                 )
 
-                .collect(Collectors.toList());
-
+                .collect(
+                        Collectors.toList()
+                );
 
     }
 
@@ -144,17 +184,15 @@ public class StudentService {
     ) {
 
 
+
         Student student =
                 studentRepository.findById(id)
 
                         .orElseThrow(
-
                                 () -> new RuntimeException(
                                         "Student not found"
                                 )
-
                         );
-
 
 
 
@@ -162,7 +200,6 @@ public class StudentService {
                 student,
                 StudentResponseDto.class
         );
-
 
     }
 
@@ -178,19 +215,35 @@ public class StudentService {
 
             Long id,
 
-            StudentRequestDto studentRequestDto
+            StudentRequestDto request
 
     ) {
 
 
 
-        Student existingStudent =
+        Student student =
                 studentRepository.findById(id)
 
                         .orElseThrow(
 
                                 () -> new RuntimeException(
                                         "Student not found"
+                                )
+                        );
+
+
+
+
+
+        Department department =
+                departmentRepository.findById(
+                                request.getDepartmentId()
+                        )
+
+                        .orElseThrow(
+
+                                () -> new RuntimeException(
+                                        "Department not found"
                                 )
 
                         );
@@ -199,110 +252,45 @@ public class StudentService {
 
 
 
-        if (
-
-                !existingStudent.getUsn()
-                        .equals(
-                                studentRequestDto.getUsn()
-                        )
-
-                        &&
-
-                        studentRepository.existsByUsn(
-                                studentRequestDto.getUsn()
-                        )
-
-        ) {
-
-
-            throw new RuntimeException(
-                    "USN already exists"
-            );
-
-
-        }
-
-
-
-
-
-
-
-        if (
-
-                !existingStudent.getEmail()
-                        .equals(
-                                studentRequestDto.getEmail()
-                        )
-
-                        &&
-
-                        studentRepository.existsByEmail(
-                                studentRequestDto.getEmail()
-                        )
-
-        ) {
-
-
-            throw new RuntimeException(
-                    "Email already exists"
-            );
-
-
-        }
-
-
-
-
-
-
-
-
-        existingStudent.setUsn(
-                studentRequestDto.getUsn()
+        student.setUsn(
+                request.getUsn()
         );
 
 
-        existingStudent.setName(
-                studentRequestDto.getName()
+        student.setName(
+                request.getName()
         );
 
 
-        existingStudent.setEmail(
-                studentRequestDto.getEmail()
+        student.setEmail(
+                request.getEmail()
         );
 
 
-        existingStudent.setDepartment(
-                studentRequestDto.getDepartment()
+        student.setAge(
+                request.getAge()
         );
 
 
-        existingStudent.setAge(
-                studentRequestDto.getAge()
+        student.setDepartment(
+                department
         );
 
 
 
 
 
-
-
-
-        Student updatedStudent =
+        Student updated =
                 studentRepository.save(
-                        existingStudent
+                        student
                 );
 
 
 
-
-
         return modelMapper.map(
-                updatedStudent,
+                updated,
                 StudentResponseDto.class
         );
-
 
     }
 
@@ -326,8 +314,9 @@ public class StudentService {
 
         return "Student deleted successfully";
 
-
     }
+
+
 
 
 
@@ -377,17 +366,10 @@ public class StudentService {
         Page<Student> students;
 
 
-
-
-
         if (
-
                 keyword != null
-
                         &&
-
                         !keyword.isEmpty()
-
         ) {
 
 
@@ -396,17 +378,14 @@ public class StudentService {
                             .findByNameContainingIgnoreCaseOrUsnContainingIgnoreCaseOrEmailContainingIgnoreCase(
 
                                     keyword,
-
                                     keyword,
-
                                     keyword,
-
                                     pageable
-
                             );
 
+        }
 
-        } else {
+        else {
 
 
             students =
@@ -414,9 +393,7 @@ public class StudentService {
                             pageable
                     );
 
-
         }
-
 
 
 
@@ -433,7 +410,6 @@ public class StudentService {
                         )
 
         );
-
 
     }
 

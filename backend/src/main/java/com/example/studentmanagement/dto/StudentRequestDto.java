@@ -23,14 +23,12 @@ public class StudentRequestDto {
 
 
 
-
     @NotBlank(message = "Name is required")
     @Pattern(
             regexp = "^[A-Za-z ]+$",
             message = "Name must contain only letters"
     )
     private String name;
-
 
 
 
@@ -43,14 +41,8 @@ public class StudentRequestDto {
 
 
 
-
-    @NotBlank(message = "Department is required")
-    @Pattern(
-            regexp = "^[A-Za-z ]+$",
-            message = "Department must contain only letters"
-    )
-    private String department;
-
+    @NotNull(message = "Department is required")
+    private Long departmentId;
 
 
 
@@ -73,124 +65,65 @@ public class StudentRequestDto {
 
 
 
-
-    public StudentRequestDto() {
-
-    }
-
-
-
-
-
-
-
-
     public String getUsn() {
-
         return usn;
-
     }
 
 
-    public void setUsn(
-            String usn
-    ) {
-
+    public void setUsn(String usn) {
         this.usn = usn;
-
     }
-
-
-
-
 
 
 
 
 
     public String getName() {
-
         return name;
-
     }
 
 
-    public void setName(
-            String name
-    ) {
-
+    public void setName(String name) {
         this.name = name;
-
     }
-
-
-
-
 
 
 
 
 
     public String getEmail() {
-
         return email;
-
     }
 
 
-    public void setEmail(
-            String email
-    ) {
-
+    public void setEmail(String email) {
         this.email = email;
-
     }
 
 
 
 
 
-
-
-
-
-
-    public String getDepartment() {
-
-        return department;
-
+    public Long getDepartmentId() {
+        return departmentId;
     }
 
 
-    public void setDepartment(
-            String department
-    ) {
-
-        this.department = department;
-
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
     }
-
-
-
-
 
 
 
 
 
     public Integer getAge() {
-
         return age;
-
     }
 
 
-    public void setAge(
-            Integer age
-    ) {
-
+    public void setAge(Integer age) {
         this.age = age;
-
     }
 
 

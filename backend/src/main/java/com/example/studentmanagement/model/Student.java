@@ -1,12 +1,7 @@
 package com.example.studentmanagement.model;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
+import jakarta.persistence.*;
 
 
 @Entity
@@ -19,7 +14,6 @@ public class Student {
 
 
 
-
     @Column(
             nullable = false,
             unique = true
@@ -28,9 +22,7 @@ public class Student {
 
 
 
-
     private String name;
-
 
 
 
@@ -44,17 +36,17 @@ public class Student {
 
 
 
-
-    private String department;
-
+    @ManyToOne
+    @JoinColumn(
+            name = "department_id",
+            nullable = false
+    )
+    private Department department;
 
 
 
 
     private Integer age;
-
-
-
 
 
 
@@ -69,54 +61,6 @@ public class Student {
 
 
 
-
-
-    public Student(
-
-            Long id,
-
-            String usn,
-
-            String name,
-
-            String email,
-
-            String department,
-
-            Integer age
-
-    ) {
-
-
-        this.id = id;
-
-
-        this.usn = usn;
-
-
-        this.name = name;
-
-
-        this.email = email;
-
-
-        this.department = department;
-
-
-        this.age = age;
-
-
-    }
-
-
-
-
-
-
-
-
-
-
     public Long getId() {
 
         return id;
@@ -124,18 +68,11 @@ public class Student {
     }
 
 
-
-    public void setId(
-            Long id
-    ) {
+    public void setId(Long id) {
 
         this.id = id;
 
     }
-
-
-
-
 
 
 
@@ -148,20 +85,11 @@ public class Student {
     }
 
 
-
-    public void setUsn(
-            String usn
-    ) {
+    public void setUsn(String usn) {
 
         this.usn = usn;
 
     }
-
-
-
-
-
-
 
 
 
@@ -174,20 +102,11 @@ public class Student {
     }
 
 
-
-    public void setName(
-            String name
-    ) {
+    public void setName(String name) {
 
         this.name = name;
 
     }
-
-
-
-
-
-
 
 
 
@@ -201,10 +120,7 @@ public class Student {
     }
 
 
-
-    public void setEmail(
-            String email
-    ) {
+    public void setEmail(String email) {
 
         this.email = email;
 
@@ -215,31 +131,20 @@ public class Student {
 
 
 
-
-
-
-
-
-    public String getDepartment() {
+    public Department getDepartment() {
 
         return department;
 
     }
 
 
-
     public void setDepartment(
-            String department
+            Department department
     ) {
 
         this.department = department;
 
     }
-
-
-
-
-
 
 
 
@@ -253,10 +158,7 @@ public class Student {
     }
 
 
-
-    public void setAge(
-            Integer age
-    ) {
+    public void setAge(Integer age) {
 
         this.age = age;
 

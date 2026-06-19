@@ -1,16 +1,13 @@
 package com.example.studentmanagement.repository;
 
 
+import com.example.studentmanagement.dto.DepartmentCountDto;
 import com.example.studentmanagement.model.Student;
-
-
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-
 import org.springframework.data.jpa.repository.JpaRepository;
-
-
+import java.util.List;
 import org.springframework.stereotype.Repository;
 
 
@@ -19,6 +16,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StudentRepository
         extends JpaRepository<Student, Long> {
+
+
+    @Query(
+            "SELECT new com.example.studentmanagement.dto.DepartmentCountDto(" +
+                    "s.department.code, COUNT(s)" +
+                    ") " +
+                    "FROM Student s " +
+                    "GROUP BY s.department.code"
+    )
+    List<DepartmentCountDto> countStudentsByDepartment();
 
 
 

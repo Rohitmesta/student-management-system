@@ -1,44 +1,109 @@
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+
+
+import {
+    getDashboardStats,
+    getDepartmentCounts,
+    type DashboardStats,
+    type DepartmentCount
+
+} from "../api/dashboardApi";
+
+
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    Tooltip,
+    ResponsiveContainer
+
+} from "recharts";
 
 
 import {
     Users,
-    Building,
-    Activity
+    Building2,
+    BarChart3
+
 } from "lucide-react";
 
 
-import { getStudents } from "../api/studentApi";
+
+
+
+
 
 
 
 function Dashboard() {
 
 
-    const {
-        data: students = []
-    } = useQuery({
+    const [stats, setStats] =
+        useState<DashboardStats>({
 
-        queryKey: ["students"],
+            students: 0,
 
-        queryFn: getStudents
+            departments: 0
 
-    });
-
+        });
 
 
 
-    const departments =
-        new Set(
 
-            students.map(
+    const [departmentData, setDepartmentData] =
+        useState<DepartmentCount[]>([]);
 
-                student =>
-                    student.department
 
-            )
 
-        ).size;
+
+
+
+
+    useEffect(() => {
+
+
+        loadDashboard();
+
+
+    }, []);
+
+
+
+
+
+
+
+
+
+    const loadDashboard = async () => {
+
+
+        const statsData =
+            await getDashboardStats();
+
+
+        const deptData =
+            await getDepartmentCounts();
+
+
+
+
+        setStats(
+            statsData
+        );
+
+
+        setDepartmentData(
+            deptData
+        );
+
+
+    };
+
+
+
+
 
 
 
@@ -47,53 +112,110 @@ function Dashboard() {
 
     return (
 
-        <div>
 
-
-            <h1 className="text-3xl font-bold">
-
-                Welcome back 👋
-
-            </h1>
-
-
-
-            <p className="text-gray-500 mt-2">
-
-                Student Management Overview
-
-            </p>
+        <div className="space-y-8">
 
 
 
 
 
 
-            <div className="grid grid-cols-3 gap-6 mt-8">
+            {/* HEADER */}
+
+            <div>
+
+
+                <h1 className="text-3xl font-bold text-slate-800">
+
+
+                    Dashboard 📊
+
+
+                </h1>
+
+
+
+                <p className="text-gray-500 mt-2">
+
+
+                    Student Management Overview
+
+
+                </p>
+
+
+            </div>
 
 
 
 
 
-                <div className="bg-white p-6 rounded-2xl shadow">
-
-
-                    <Users size={35} />
-
-
-                    <p className="text-gray-500 mt-5">
-
-                        Total Students
-
-                    </p>
 
 
 
-                    <h2 className="text-4xl font-bold">
 
-                        {students.length}
 
-                    </h2>
+
+            {/* CARDS */}
+
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+
+
+
+
+
+                {/* STUDENTS */}
+
+
+                <div className="bg-white rounded-2xl shadow p-8 flex justify-between items-center">
+
+
+
+                    <div>
+
+
+                        <p className="text-gray-500">
+
+
+                            Total Students
+
+
+                        </p>
+
+
+
+                        <h1 className="text-4xl font-bold mt-4">
+
+
+                            {stats.students}
+
+
+                        </h1>
+
+
+
+                    </div>
+
+
+
+
+                    <div className="bg-blue-100 p-5 rounded-xl">
+
+
+                        <Users
+
+                            size={40}
+
+                            className="text-blue-600"
+
+                        />
+
+
+                    </div>
+
+
 
 
                 </div>
@@ -105,26 +227,106 @@ function Dashboard() {
 
 
 
-                <div className="bg-white p-6 rounded-2xl shadow">
+
+                {/* DEPARTMENTS */}
 
 
-                    <Building size={35} />
-
-
-
-                    <p className="text-gray-500 mt-5">
-
-                        Departments
-
-                    </p>
+                <div className="bg-white rounded-2xl shadow p-8 flex justify-between items-center">
 
 
 
-                    <h2 className="text-4xl font-bold">
+                    <div>
 
-                        {departments}
+
+                        <p className="text-gray-500">
+
+
+                            Total Departments
+
+
+                        </p>
+
+
+
+
+                        <h1 className="text-4xl font-bold mt-4">
+
+
+                            {stats.departments}
+
+
+                        </h1>
+
+
+
+                    </div>
+
+
+
+
+
+                    <div className="bg-green-100 p-5 rounded-xl">
+
+
+                        <Building2
+
+                            size={40}
+
+                            className="text-green-600"
+
+                        />
+
+
+                    </div>
+
+
+
+
+                </div>
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+            {/* CHART */}
+
+
+            <div className="bg-white rounded-2xl shadow p-8">
+
+
+
+                <div className="flex items-center gap-3 mb-8">
+
+
+                    <BarChart3
+
+                        className="text-purple-600"
+
+                    />
+
+
+
+                    <h2 className="text-xl font-bold">
+
+
+                        Students by Department
+
 
                     </h2>
+
 
 
                 </div>
@@ -136,27 +338,70 @@ function Dashboard() {
 
 
 
-
-                <div className="bg-white p-6 rounded-2xl shadow">
-
-
-                    <Activity size={35} />
+                <div className="h-80">
 
 
 
-                    <p className="text-gray-500 mt-5">
+                    <ResponsiveContainer
 
-                        System Status
+                        width="100%"
 
-                    </p>
+                        height="100%"
+
+                    >
 
 
 
-                    <h2 className="text-green-600 text-2xl font-bold">
+                        <BarChart
 
-                        Active
+                            data={departmentData}
 
-                    </h2>
+                        >
+
+
+
+                            <XAxis
+
+                                dataKey="department"
+
+                            />
+
+
+
+                            <YAxis
+
+                                allowDecimals={false}
+
+                            />
+
+
+
+                            <Tooltip />
+
+
+
+
+                            <Bar
+
+                                dataKey="count"
+
+                                fill="#2563eb"
+
+                                radius={[8, 8, 0, 0]}
+
+                                barSize={80}
+
+                            />
+
+
+
+                        </BarChart>
+
+
+
+
+                    </ResponsiveContainer>
+
 
 
                 </div>
@@ -167,11 +412,17 @@ function Dashboard() {
             </div>
 
 
+
+
+
         </div>
+
 
     );
 
+
 }
+
 
 
 export default Dashboard;
