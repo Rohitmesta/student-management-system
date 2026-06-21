@@ -212,16 +212,16 @@ GET /api/dashboard/departments
 #  Screenshots
 
 ## Login Page
+screenshots/login.png
 
-(Add screenshot)
 
 ## Dashboard
 
-(Add screenshot)
+screenshots/dashboard.png
 
 ## Students Page
 
-(Add screenshot)
+screenshots/students.png
 
 ---
 
