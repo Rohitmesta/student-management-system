@@ -222,6 +222,14 @@ screenshots/dashboard.png
 ## Students Page
 
 screenshots/students.png
+## Swagger page
+screenshots/swagger.png
+
+## Live Demo:
+https://your-vercel-link.vercel.app
+
+## API Documentation:
+https://student-management-backend-9ype.onrender.com/swagger-ui/index.html
 
 ---
 
