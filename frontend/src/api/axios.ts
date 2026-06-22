@@ -9,11 +9,7 @@ const api = axios.create({
 
 
 
-
-
-
 api.interceptors.request.use(
-
 
     (config) => {
 
@@ -24,30 +20,19 @@ api.interceptors.request.use(
             );
 
 
-
         if (token) {
-
 
             config.headers.Authorization =
                 `Bearer ${token}`;
 
-
         }
-
 
 
         return config;
 
-
     }
 
-
 );
-
-
-
-
-
 
 
 
@@ -58,13 +43,11 @@ api.interceptors.response.use(
     (response) => response,
 
 
-
     async (error) => {
 
 
         const originalRequest =
             error.config;
-
 
 
 
@@ -83,8 +66,6 @@ api.interceptors.response.use(
                 true;
 
 
-
-
             try {
 
 
@@ -94,30 +75,22 @@ api.interceptors.response.use(
                     );
 
 
-
-
                 const response =
-                    await axios.post(
+                    await api.post(
 
-                        "http://localhost:8080/auth/refresh",
+                        "/auth/refresh",
 
                         {
-
                             refreshToken:
                             refreshToken
-
                         }
 
                     );
 
 
 
-
-
                 const newAccessToken =
                     response.data.accessToken;
-
-
 
 
 
@@ -131,28 +104,20 @@ api.interceptors.response.use(
 
 
 
-
-
                 originalRequest.headers.Authorization =
                     `Bearer ${newAccessToken}`;
 
 
 
-
-
                 return api(
-
                     originalRequest
-
                 );
-
 
 
             }
 
 
             catch (refreshError) {
-
 
 
                 localStorage.removeItem(
@@ -164,37 +129,26 @@ api.interceptors.response.use(
                 );
 
 
-
                 window.location.href =
                     "/login";
-
 
 
                 return Promise.reject(
                     refreshError
                 );
 
-
             }
 
-
         }
-
-
 
 
         return Promise.reject(
             error
         );
 
-
     }
 
-
 );
-
-
-
 
 
 export default api;
