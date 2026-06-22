@@ -203,7 +203,9 @@ public class SecurityConfig {
 
                 List.of(
 
-                        "http://localhost:5173"
+                        "http://localhost:5173",
+
+                        "https://student-management-system-ebon-rho.vercel.app"
 
                 )
 
